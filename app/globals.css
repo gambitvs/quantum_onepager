@@ -174,3 +174,95 @@ a:hover {
   background-color: var(--color-foreground);
   color: var(--color-background);
 }
+
+/* ============================================
+   MISSION CONTROL STYLES
+   ============================================ */
+
+/* Panel base - dark card with border */
+.mission-panel {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Active panel - lime left border */
+.mission-panel.active {
+  border-left: 3px solid var(--color-primary);
+}
+
+/* Code syntax highlighting */
+.code-keyword {
+  color: var(--color-primary);
+}
+
+.code-string {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.code-comment {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.code-number {
+  color: #ffb800;
+}
+
+/* Status badge colors */
+.status-active {
+  color: var(--color-primary);
+}
+
+.status-staged {
+  color: var(--color-foreground);
+}
+
+.status-pending {
+  color: #ffb800;
+}
+
+.status-rejected {
+  color: rgba(255, 100, 100, 0.6);
+}
+
+/* Pulse glow animation */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(208, 255, 20, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 2px rgba(208, 255, 20, 0.3);
+  }
+}
+
+/* Cursor blink animation */
+@keyframes cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Data flash animation */
+@keyframes data-flash {
+  0% {
+    background: transparent;
+  }
+  50% {
+    background: rgba(208, 255, 20, 0.2);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* Tabular numbers for data alignment */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
