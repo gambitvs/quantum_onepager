@@ -203,12 +203,15 @@ export default function Home() {
             </h3>
             <p className="text-sm text-white/50 leading-relaxed mb-4">
               Markets are influenced by numbers AND language: news, tweets,
-              earnings calls, Fed statements. We train hybrid models combining
-              numeric time-series with NLP.
+              earnings calls, Fed statements. We train hybrid systems that fuse
+              a time-series foundation model (long-context, probabilistic,
+              regime-aware) with a retrieval-grounded language model that turns
+              unstructured text into structured, tradeable signals.
             </p>
             <p className="font-data text-xs text-white/30">
               A trading agent that reads a Fed statement AND adjusts strategy
-              accordingly.
+              accordingly — with sourced evidence, calibrated uncertainty, and
+              an explicit "no-trade" option when the edge isn't there.
             </p>
           </div>
 
@@ -217,13 +220,22 @@ export default function Home() {
               Reinforcement Learning in Market Simulators
             </h3>
             <p className="text-sm text-white/50 leading-relaxed mb-4">
-              Deep RL trains agents by "learning through trading" in simulated
-              environments for equities, FX, crypto, and prediction markets.
-              Agents self-play and discover strategies.
+              Deep RL trains agents by "learning through trading" — but with
+              modern, production-grade constraints: offline + constrained RL on
+              real historical trajectories, then robustness training in
+              calibrated multi-agent simulators where liquidity, slippage, and
+              market impact are endogenous (not assumed).
+            </p>
+            <p className="text-sm text-white/50 leading-relaxed mb-4">
+              Agents don't just "self-play." They train against adversarial
+              market conditions: regime shifts, volatility spikes, liquidity
+              droughts, and adversarial flow — optimizing risk-adjusted returns
+              under turnover, drawdown, and exposure limits.
             </p>
             <p className="font-data text-xs text-white/30">
-              AlphaGo for markets. Stochastic and adversarial elements for
-              robustness.
+              AlphaGo for markets — execution-aware and stress-tested, with
+              stochasticity and adversarial scenario generation built into
+              training for robustness.
             </p>
           </div>
 
@@ -233,11 +245,24 @@ export default function Home() {
             </h3>
             <p className="text-sm text-white/50 leading-relaxed mb-4">
               Finance GPT variants trained on SEC filings, news, social
-              sentiment. Models that digest information AND generate hypotheses
-              with natural language interfaces.
+              sentiment — paired with time-series foundation backbones for
+              prices, liquidity, and cross-asset structure, and
+              mixture-of-experts routing that learns when each modality is
+              predictive.
+            </p>
+            <p className="text-sm text-white/50 leading-relaxed mb-4">
+              Models that digest information AND generate hypotheses with
+              natural language interfaces — with post-training that enforces
+              evidence discipline, calibration, and abstention rather than
+              confident hallucination.
+            </p>
+            <p className="font-data text-xs text-white/30 mb-2">
+              Explainable agent reasoning. Not a black box.
             </p>
             <p className="font-data text-xs text-white/30">
-              Explainable agent reasoning. Not a black box.
+              Every position comes with a decision trace: sources → extracted
+              signals → forecast distributions → portfolio action → constraint
+              checks → risk contributions → scenario sensitivity.
             </p>
           </div>
 
@@ -246,8 +271,10 @@ export default function Home() {
               Continuous Adaptation
             </h3>
             <p className="text-sm text-white/50 leading-relaxed mb-4">
-              Unlike static algorithms, our AI continuously learns from new
-              data. Detects performance drift and autonomously retrains.
+              Unlike static algorithms, our AI continuously learns from new data
+              — but never blindly. It detects drift, runs shadow evaluations,
+              and triggers gated retraining with canary deployment, rollback,
+              and hard risk limits.
             </p>
             <p className="font-data text-xs text-white/30">
               An AI that updates itself like an evolving organism.
@@ -265,7 +292,6 @@ export default function Home() {
         <div className="flex flex-wrap gap-x-12 gap-y-4 mb-8">
           <p className="font-display text-2xl md:text-3xl">Michael Gonzales</p>
           <p className="font-display text-2xl md:text-3xl">Shawn Henry</p>
-          <p className="font-display text-2xl md:text-3xl">Zan Shaikh</p>
         </div>
 
         <div className="max-w-2xl mb-8">
