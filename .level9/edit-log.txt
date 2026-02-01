@@ -6,3 +6,12 @@
 2026-01-31T18:15:16 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/.env.example
 2026-01-31T18:15:53 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/SPEC.md
 2026-01-31T18:16:01 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/SPEC.md
+2026-01-31T18:18:07 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/auth.ts
+2026-01-31T18:18:11 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/api/auth/[...nextauth]/route.ts
+2026-01-31T18:18:23 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/middleware.ts
+2026-01-31T18:18:52 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/auth/login/page.tsx
+2026-01-31T18:18:57 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/dashboard/page.tsx
+2026-01-31T18:19:30 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/dashboard/DashboardClient.tsx
+2026-01-31T18:19:47 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/.env.example
+2026-01-31T18:20:00 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/auth/login/page.tsx
+2026-01-31T18:20:11 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/auth/login/page.tsx
