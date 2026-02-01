@@ -1,4 +1,5 @@
 import "@testing-library/react";
+import { vi } from "vitest";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({

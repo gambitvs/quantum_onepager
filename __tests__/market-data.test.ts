@@ -37,8 +37,11 @@ describe("Market Data Service", () => {
         change: 25,
         changePercent: 5.2,
         volume: 100000000,
+        high: 502,
+        low: 495,
+        open: 498,
         previousClose: 475,
-        lastUpdated: new Date().toISOString(),
+        timestamp: Date.now(),
         category: "etf",
       },
     ];
