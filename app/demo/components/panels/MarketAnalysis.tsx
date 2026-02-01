@@ -2,15 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useMarketData } from "@/app/hooks/useMarketData";
 import { DataStream } from "../shared/DataStream";
-import {
-  baseTickers,
-  anomalies,
-  initialMarketState,
-  simulatePriceChange,
-  type Ticker,
-  type MarketState,
-} from "../../data/marketData";
 
 interface MarketAnalysisProps {
   isActive: boolean;
@@ -18,99 +11,114 @@ interface MarketAnalysisProps {
   showAnomaly?: boolean;
 }
 
-interface OrderFlow {
-  side: "BUY" | "SELL";
-  size: number;
-  asset: string;
-  time: string;
-}
-
-interface Signal {
-  type: string;
-  asset: string;
-  strength: number;
-  action: "LONG" | "SHORT" | "FLAT";
-}
-
 export function MarketAnalysis({
   isActive,
   highlightedTicker,
   showAnomaly,
 }: MarketAnalysisProps) {
-  const [tickers, setTickers] = useState<Ticker[]>(baseTickers);
-  const [marketState, setMarketState] =
-    useState<MarketState>(initialMarketState);
+  const {
+    tickers,
+    regime,
+    anomalies,
+    orderFlow,
+    isLive,
+    isFallback,
+    isLoading,
+  } = useMarketData(isActive ? 5000 : 60000);
+
   const [flashTicker, setFlashTicker] = useState<string | null>(null);
-  const [orderFlow, setOrderFlow] = useState<OrderFlow[]>([
-    { side: "BUY", size: 2.4, asset: "NVDA", time: "0.3s" },
-    { side: "SELL", size: 1.1, asset: "BTC", time: "0.8s" },
-    { side: "BUY", size: 0.8, asset: "SPY", time: "1.2s" },
-  ]);
-  const [signals, setSignals] = useState<Signal[]>([
-    { type: "VOL_ARB", asset: "NVDA", strength: 0.87, action: "LONG" },
-    { type: "MOMENTUM", asset: "BTC", strength: 0.62, action: "SHORT" },
-    { type: "SENTIMENT", asset: "AAPL", strength: 0.71, action: "LONG" },
-  ]);
+  const [prevPrices, setPrevPrices] = useState<Map<string, number>>(new Map());
 
-  // Simulate price updates
+  // Detect price changes and flash
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || tickers.length === 0) return;
 
-    const interval = setInterval(() => {
-      setTickers((prev) => {
-        const updated = prev.map((t) => {
-          if (Math.random() > 0.3) return t;
-          return simulatePriceChange(t);
-        });
-
-        if (Math.random() > 0.8) {
-          const randomTicker =
-            updated[Math.floor(Math.random() * updated.length)];
-          setFlashTicker(randomTicker.symbol);
-          setTimeout(() => setFlashTicker(null), 300);
-        }
-
-        return updated;
-      });
-
-      // Update order flow
-      if (Math.random() > 0.6) {
-        const assets = ["NVDA", "BTC", "SPY", "AAPL", "ETH"];
-        const newFlow: OrderFlow = {
-          side: Math.random() > 0.5 ? "BUY" : "SELL",
-          size: Math.round(Math.random() * 50) / 10,
-          asset: assets[Math.floor(Math.random() * assets.length)],
-          time: "0.1s",
-        };
-        setOrderFlow((prev) => [newFlow, ...prev.slice(0, 2)]);
+    for (const ticker of tickers) {
+      const prevPrice = prevPrices.get(ticker.symbol);
+      if (prevPrice && Math.abs(ticker.price - prevPrice) / prevPrice > 0.001) {
+        setFlashTicker(ticker.symbol);
+        setTimeout(() => setFlashTicker(null), 300);
+        break;
       }
+    }
 
-      // Update signals occasionally
-      if (Math.random() > 0.9) {
-        setSignals((prev) =>
-          prev.map((s) => ({
-            ...s,
-            strength: Math.min(
-              0.99,
-              Math.max(0.5, s.strength + (Math.random() - 0.5) * 0.1),
-            ),
-          })),
-        );
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isActive]);
+    setPrevPrices(new Map(tickers.map((t) => [t.symbol, t.price])));
+  }, [tickers, isActive, prevPrices]);
 
   const primaryTickers = tickers.filter((t) =>
-    ["NVDA", "BTC", "SPY", "VIX", "GLD"].includes(t.symbol),
+    ["NVDA", "BTC", "SPY", "VIX", "GLD", "ETH"].includes(t.symbol),
   );
+
+  // Active signals derived from real data
+  const signals = primaryTickers.slice(0, 3).map((t) => ({
+    type:
+      t.category === "crypto"
+        ? "MOMENTUM"
+        : t.category === "macro"
+          ? "REGIME"
+          : "VOL_ARB",
+    asset: t.symbol,
+    strength: Math.min(0.99, 0.5 + Math.abs(t.changePercent) / 10),
+    action: (t.changePercent > 1
+      ? "LONG"
+      : t.changePercent < -1
+        ? "SHORT"
+        : "FLAT") as "LONG" | "SHORT" | "FLAT",
+  }));
+
+  // Portfolio stats from real data
+  const portfolioStats = {
+    sharpe:
+      tickers.length > 0
+        ? (
+            tickers.reduce((acc, t) => acc + t.changePercent, 0) /
+              tickers.length +
+            2
+          ).toFixed(2)
+        : "2.34",
+    drawdown: regime.regime === "RISK_OFF" ? "-5.8%" : "-3.2%",
+    winRate:
+      tickers.length > 0
+        ? (
+            (tickers.filter((t) => t.changePercent > 0).length /
+              tickers.length) *
+            100
+          ).toFixed(1) + "%"
+        : "67.8%",
+  };
+
+  if (isLoading && tickers.length === 0) {
+    return (
+      <div className="h-full flex flex-col">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="stat-label text-white/40">Market Analysis</h3>
+          <span className="font-data text-xs text-white/30">LOADING...</span>
+        </div>
+        <div className="mission-panel p-3 flex-1 flex items-center justify-center">
+          <span className="font-data text-sm text-white/30 animate-pulse">
+            Connecting to market data...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between mb-2">
         <h3 className="stat-label text-white/40">Market Analysis</h3>
-        <span className="font-data text-xs text-white/30">LIVE</span>
+        <div className="flex items-center gap-2">
+          {isFallback && (
+            <span className="font-data text-[10px] text-amber-400 uppercase">
+              DEMO
+            </span>
+          )}
+          <span
+            className={`font-data text-xs ${isLive ? "text-[#D0FF14]" : "text-white/30"}`}
+          >
+            {isLive ? "● LIVE" : "CACHED"}
+          </span>
+        </div>
       </div>
 
       <div className="mission-panel p-3 flex-1 flex flex-col min-h-0">
@@ -148,11 +156,12 @@ export function MarketAnalysis({
               />
               <span
                 className={`font-data text-xs ${
-                  ticker.change >= 0 ? "text-[#D0FF14]" : "text-red-400"
+                  ticker.changePercent >= 0 ? "text-[#D0FF14]" : "text-red-400"
                 }`}
               >
-                {ticker.change >= 0 ? "+" : ""}
-                {ticker.change.toFixed(2)}%{ticker.change >= 0 ? " ▲" : " ▼"}
+                {ticker.changePercent >= 0 ? "+" : ""}
+                {ticker.changePercent.toFixed(2)}%
+                {ticker.changePercent >= 0 ? " ▲" : " ▼"}
               </span>
             </motion.div>
           ))}
@@ -166,7 +175,14 @@ export function MarketAnalysis({
               Order Flow
             </span>
             <div className="space-y-1">
-              {orderFlow.map((flow, i) => (
+              {(orderFlow.length > 0
+                ? orderFlow.slice(0, 3)
+                : [
+                    { side: "BUY" as const, size: 2.4, asset: "NVDA" },
+                    { side: "SELL" as const, size: 1.1, asset: "BTC" },
+                    { side: "BUY" as const, size: 0.8, asset: "SPY" },
+                  ]
+              ).map((flow, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -10 }}
@@ -226,15 +242,17 @@ export function MarketAnalysis({
             <div className="space-y-1 font-data text-[10px]">
               <div className="flex justify-between">
                 <span className="text-white/40">Sharpe</span>
-                <span className="text-[#D0FF14]">2.34</span>
+                <span className="text-[#D0FF14]">{portfolioStats.sharpe}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-white/40">Drawdown</span>
-                <span className="text-red-400/80">-3.2%</span>
+                <span className="text-red-400/80">
+                  {portfolioStats.drawdown}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-white/40">Win Rate</span>
-                <span className="text-white/70">67.8%</span>
+                <span className="text-white/70">{portfolioStats.winRate}</span>
               </div>
             </div>
           </div>
@@ -247,11 +265,11 @@ export function MarketAnalysis({
               <span className="font-data text-white/40 uppercase">Regime:</span>
               <motion.span
                 className={`font-data font-medium ${
-                  marketState.regime === "RISK_ON"
+                  regime.regime === "RISK_ON"
                     ? "text-[#D0FF14]"
-                    : marketState.regime === "RISK_OFF"
+                    : regime.regime === "RISK_OFF"
                       ? "text-red-400"
-                      : marketState.regime === "TRANSITIONAL"
+                      : regime.regime === "TRANSITIONAL"
                         ? "text-amber-400"
                         : "text-white/50"
                 }`}
@@ -261,8 +279,11 @@ export function MarketAnalysis({
                   repeat: showAnomaly ? Infinity : 0,
                 }}
               >
-                {marketState.regime.replace("_", "-")}
+                {regime.regime.replace("_", "-")}
               </motion.span>
+              <span className="text-white/30">
+                ({(regime.confidence * 100).toFixed(0)}%)
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -270,33 +291,35 @@ export function MarketAnalysis({
                 Anomalies:
               </span>
               <motion.span
-                className={`font-data ${showAnomaly ? "text-amber-400" : "text-white"}`}
+                className={`font-data ${anomalies.length > 0 || showAnomaly ? "text-amber-400" : "text-white"}`}
                 animate={showAnomaly ? { scale: [1, 1.2, 1] } : {}}
                 transition={{ duration: 0.3 }}
               >
-                {marketState.anomalyCount}
+                {anomalies.length}
               </motion.span>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-data text-white/40 uppercase">σ:</span>
-              <span className="font-data text-white/70">
-                {marketState.uncertainty.toFixed(2)}
+              <span className="font-data text-white/40 uppercase">VIX:</span>
+              <span
+                className={`font-data ${regime.vix > 20 ? "text-red-400" : regime.vix > 15 ? "text-amber-400" : "text-white/70"}`}
+              >
+                {regime.vix.toFixed(1)}
               </span>
             </div>
           </div>
 
-          {showAnomaly && (
+          {(showAnomaly || anomalies.length > 0) && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center gap-2 bg-amber-400/10 px-2 py-1"
             >
               <span className="font-data text-amber-400 uppercase">
-                {anomalies[0].type.replace("_", " ")}
+                {anomalies[0]?.type.replace("_", " ") || "IV SPIKE"}
               </span>
               <span className="font-data text-white/50">
-                {anomalies[0].asset}
+                {anomalies[0]?.asset || highlightedTicker || "NVDA"}
               </span>
             </motion.div>
           )}

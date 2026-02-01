@@ -2,11 +2,12 @@
 
 ## Executive Summary
 
-**What it is today**: A Next.js marketing site with 3 pages:
+**What it is today**: A Next.js platform with live market data:
 
 1. `/` - Static investor pitch (manifesto-style one-pager)
-2. `/demo` - Mission Control animation demonstrating AI trading concepts
+2. `/demo` - **Live Mission Control** with real-time market data from Polygon.io, CoinGecko, FRED
 3. `/thesis` - Scroll-driven investment thesis presentation
+4. `/api/market` - Real-time market data API endpoint
 
 **What it becomes**: A fully operational AI-powered trading research platform with live market intelligence, autonomous strategy generation, real-time portfolio management, and investor/LP portal functionality.
 
@@ -20,16 +21,30 @@
 quantum_onepager/
 ├── app/
 │   ├── page.tsx              # Static manifesto
-│   ├── demo/                  # Mission Control animation
-│   │   ├── components/        # 4 simulated panels
-│   │   ├── data/             # Mock data (tickers, research streams)
+│   ├── api/
+│   │   └── market/route.ts   # Live market data API endpoint
+│   ├── lib/
+│   │   └── market-data.ts    # Polygon.io, CoinGecko, FRED integrations
+│   ├── hooks/
+│   │   └── useMarketData.ts  # SWR-powered real-time data hooks
+│   ├── demo/                  # Mission Control (LIVE DATA)
+│   │   ├── components/        # 4 real-time panels
+│   │   ├── data/             # Strategy configurations
 │   │   └── hooks/            # Animation timing
 │   ├── thesis/               # Scroll presentation
 │   │   └── components/acts/  # 7 acts
 │   └── globals.css           # Design system (Editorial Noir)
-├── package.json              # Next.js 16, Framer Motion, Tailwind 4
+├── .env.example              # API key configuration template
+├── package.json              # Next.js 16, Framer Motion, Tailwind 4, SWR
 └── *.pdf                     # Fundraising materials
 ```
+
+### Live Data Sources (Implemented)
+
+- **Polygon.io**: Real-time equities, ETFs, options (SPY, NVDA, AAPL, MSFT, etc.)
+- **CoinGecko**: Crypto prices (BTC, ETH, SOL) - no API key required
+- **FRED**: Macro indicators (VIX, interest rates)
+- **Derived Signals**: Regime detection, anomaly alerts, order flow analysis
 
 ### Design DNA (Preserve)
 

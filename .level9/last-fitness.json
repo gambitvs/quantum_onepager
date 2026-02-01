@@ -1,0 +1,24 @@
+{
+  "compositeScore": 1,
+  "components": {
+    "testPassRate": 1,
+    "lintScore": 1,
+    "securityScore": 1,
+    "performanceScore": 1,
+    "typeCoverage": 1
+  },
+  "details": {
+    "testsRun": 0,
+    "testsPassed": 0,
+    "testsFailed": 0,
+    "lintWarnings": 0,
+    "lintErrors": 0,
+    "securityVulnerabilities": 0,
+    "buildTimeMs": 3162,
+    "typeErrors": 0
+  },
+  "passed": true,
+  "threshold": 0.75,
+  "recommendation": "MERGE",
+  "timestamp": "2026-02-01T01:08:39.417Z"
+}

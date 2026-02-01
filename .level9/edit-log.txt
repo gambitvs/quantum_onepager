@@ -1,0 +1,8 @@
+2026-01-31T18:11:58 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/SPEC.md
+2026-01-31T18:13:33 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/lib/market-data.ts
+2026-01-31T18:14:04 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/api/market/route.ts
+2026-01-31T18:14:18 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/hooks/useMarketData.ts
+2026-01-31T18:15:04 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/app/demo/components/panels/MarketAnalysis.tsx
+2026-01-31T18:15:16 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/.env.example
+2026-01-31T18:15:53 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/SPEC.md
+2026-01-31T18:16:01 EDIT /Users/shawnhenry/Documents/Projects/quantum_onepager/SPEC.md
